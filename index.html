@@ -134,6 +134,10 @@
             font-size: 24px;
             opacity: 0.8;
         }
+        
+        .warning {
+            color: #ffcc00;
+        }
     </style>
 </head>
 <body>
@@ -166,8 +170,8 @@
                 <strong id="presences"></strong>
             </div>
             <div class="result-item">
-                <span>Liczba lekcji które możesz jebać:</span>
-                <strong id="allowedAbsences"></strong>
+                <span id="actionLabel">Liczba lekcji które możesz jebać:</span>
+                <strong id="actionValue"></strong>
             </div>
         </div>
     </div>
@@ -178,6 +182,8 @@
             const attendancePercent = parseFloat(document.getElementById('attendance').value);
             const errorElement = document.getElementById('error');
             const resultElement = document.getElementById('result');
+            const actionLabel = document.getElementById('actionLabel');
+            const actionValue = document.getElementById('actionValue');
             
             errorElement.style.display = 'none';
             resultElement.style.display = 'none';
@@ -211,10 +217,19 @@
             
             totalLessons = Math.round(totalLessons);
             const presences = totalLessons - absences;
-            const allowedAbsences = Math.floor(presences * (1 - (attendancePercent/100)));
+            
+            // Nowa logika wyświetlania
+            if (presences > absences) {
+                actionLabel.textContent = "Liczba lekcji które możesz jebać:";
+                actionValue.textContent = presences - absences;
+                actionValue.className = "";
+            } else {
+                actionLabel.textContent = "Liczba lekcji na które musisz iść:";
+                actionValue.textContent = absences - presences;
+                actionValue.className = "warning";
+            }
             
             document.getElementById('presences').textContent = presences;
-            document.getElementById('allowedAbsences').textContent = allowedAbsences > 0 ? allowedAbsences : 0;
             resultElement.style.display = 'block';
         }
         
